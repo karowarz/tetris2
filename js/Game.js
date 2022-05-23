@@ -3,6 +3,7 @@ import { Tetrimino } from './Tetrimino';
 export class Game {
   startPosition = 4;
   rotation = Math.floor(Math.random() * 4);
+  checkPosition = null;
 
   UISelectors = {
     board: document.querySelector('[data-board]'),
@@ -10,7 +11,7 @@ export class Game {
 
   eventListeners() {
     window.addEventListener('keydown', ({ keyCode }) => {
-      if (this.stopMoving(10, 200) && keyCode === 40) {
+      if (this.shouldMove() && keyCode === 40) {
         this.moveDown();
       }
       if (this.stopLeft(-1) && keyCode === 37) {
@@ -26,6 +27,9 @@ export class Game {
     this.drawBoard(this.UISelectors.board);
     this.createTetrimino();
     this.eventListeners();
+    this.checkPosition = setInterval(() => {
+      this.stopMoving();
+    }, 1);
   }
 
   drawBoard(...params) {
@@ -74,9 +78,30 @@ export class Game {
     this.draw(position.map((el) => el + x));
   }
 
-  stopMoving(checker, max) {
-    let edge = this.activeTetriminosPosition().map((x) => x + checker);
-    return !edge.some((x) => x >= max);
+  stopMoving() {
+    if (!this.shouldMove() || this.isOccupied()) {
+      for (let el of this.activeTetrimino()) {
+        el.removeAttribute('data-active');
+        el.dataset.occupied = '';
+      }
+      this.createTetrimino();
+    }
+  }
+
+  shouldMove() {
+    let edge = this.activeTetriminosPosition().map((x) => x + 10);
+    return !edge.some((x) => x >= 200);
+  }
+
+  isOccupied() {
+    let active = this.activeTetriminosPosition();
+    let condition = [];
+    for (let el of active) {
+      condition.push(
+        document.querySelector(`[data-x="${+el + 10}"]`).dataset.occupied === ''
+      );
+    }
+    return condition.some((x) => x === true);
   }
 
   stopLeft() {
@@ -90,6 +115,7 @@ export class Game {
   }
   moveDown() {
     this.control(10);
+    this.isOccupied();
   }
   moveLeft() {
     this.control(-1);
