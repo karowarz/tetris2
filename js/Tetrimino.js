@@ -62,6 +62,7 @@ export class Tetrimino {
 
   getRandomTetrimino() {
     let randomShape = Math.floor(Math.random() * this.tetriminos.length);
+    // let randomShape = 0;
     return this.tetriminos[randomShape];
   }
 }

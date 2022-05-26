@@ -2,8 +2,9 @@ import { Board } from './Board';
 import { Tetrimino } from './Tetrimino';
 export class Game {
   startPosition = 4;
-  rotation = Math.floor(Math.random() * 4);
+  rotation = null;
   checkPosition = null;
+  currentShape = null;
 
   UISelectors = {
     board: document.querySelector('[data-board]'),
@@ -14,11 +15,14 @@ export class Game {
       if (this.shouldMove() && keyCode === 40) {
         this.moveDown();
       }
-      if (this.stopLeft(-1) && keyCode === 37) {
+      if (this.stopLeft(-1) && !this.isOccupied(-1) && keyCode === 37) {
         this.moveLeft();
       }
-      if (this.stopRight() && keyCode === 39) {
+      if (this.stopRight() && !this.isOccupied(1) && keyCode === 39) {
         this.moveRight();
+      }
+      if (keyCode === 38) {
+        this.rotate();
       }
     });
   }
@@ -39,8 +43,10 @@ export class Game {
 
   createTetrimino() {
     const tetrimino = new Tetrimino();
+    this.rotation = Math.floor(Math.random() * 4);
     const createTetrimino = tetrimino.getRandomTetrimino();
     this.draw(createTetrimino[this.rotation], this.startPosition);
+    this.currentShape = createTetrimino;
   }
 
   activeTetrimino() {
@@ -72,14 +78,8 @@ export class Game {
     }
   }
 
-  control(x) {
-    let position = this.activeTetriminosPosition();
-    this.undraw(position);
-    this.draw(position.map((el) => el + x));
-  }
-
   stopMoving() {
-    if (!this.shouldMove() || this.isOccupied()) {
+    if (!this.shouldMove() || this.isOccupied(10)) {
       for (let el of this.activeTetrimino()) {
         el.removeAttribute('data-active');
         el.dataset.occupied = '';
@@ -93,12 +93,13 @@ export class Game {
     return !edge.some((x) => x >= 200);
   }
 
-  isOccupied() {
+  isOccupied(value) {
     let active = this.activeTetriminosPosition();
     let condition = [];
     for (let el of active) {
       condition.push(
-        document.querySelector(`[data-x="${+el + 10}"]`).dataset.occupied === ''
+        document.querySelector(`[data-x="${+el + value}"]`).dataset.occupied ===
+          ''
       );
     }
     return condition.some((x) => x === true);
@@ -113,14 +114,38 @@ export class Game {
     let edge = this.activeTetriminosPosition();
     return !edge.some((x) => x % 10 === 9);
   }
+
+  control(x) {
+    let position = this.activeTetriminosPosition();
+    this.undraw(position);
+    this.draw(position.map((el) => el + x));
+  }
+
   moveDown() {
     this.control(10);
-    this.isOccupied();
   }
   moveLeft() {
     this.control(-1);
   }
   moveRight() {
     this.control(1);
+  }
+
+  rotate() {
+    let currentValues = this.activeTetriminosPosition();
+    let substractPositions = this.currentShape[this.rotation];
+    let substracted = [];
+
+    for (let index = 0; index < currentValues.length; index++) {
+      let result = currentValues[index] - substractPositions[index];
+      substracted.push(result);
+    }
+
+    // console.log('c', currentValues);
+    console.log('s', substracted);
+
+    this.undraw(currentValues);
+    this.draw(this.currentShape[this.rotation], substracted[0]);
+    this.rotation === 3 ? (this.rotation = 0) : this.rotation++;
   }
 }
