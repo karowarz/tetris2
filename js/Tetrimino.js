@@ -1,68 +1,69 @@
 export class Tetrimino {
   #ten = 10;
 
-  #ITetrimino = [
-    [1, this.#ten + 1, 2 * this.#ten + 1, 3 * this.#ten + 1],
-    [this.#ten, this.#ten + 1, this.#ten + 2, this.#ten + 3],
-    [1, this.#ten + 1, 2 * this.#ten + 1, 3 * this.#ten + 1],
-    [this.#ten, this.#ten + 1, this.#ten + 2, this.#ten + 3],
+  //The Tetrominoes
+  jTetromino = [
+    [1, this.#ten + 1, this.#ten * 2 + 1, 2],
+    [this.#ten, this.#ten + 1, this.#ten + 2, this.#ten * 2 + 2],
+    [1, this.#ten + 1, this.#ten * 2 + 1, this.#ten * 2],
+    [this.#ten, this.#ten * 2, this.#ten * 2 + 1, this.#ten * 2 + 2],
   ];
 
-  #TTetrimino = [
-    [0, 1, 2, this.#ten + 1],
-    [this.#ten, 1, this.#ten + 1, 2 * this.#ten + 1],
-    [this.#ten, 1, this.#ten + 1, this.#ten + 2],
-    [this.#ten + 1, 1, 2 * this.#ten + 1, this.#ten + 2],
-  ];
-
-  #OTetrimino = [
-    [0, 1, this.#ten, this.#ten + 1],
-    [0, 1, this.#ten, this.#ten + 1],
-    [0, 1, this.#ten, this.#ten + 1],
-    [0, 1, this.#ten, this.#ten + 1],
-  ];
-
-  #LTetrimino = [
+  lTetromino = [
+    [0, 1, this.#ten + 1, this.#ten * 2 + 1],
+    [2, this.#ten, this.#ten + 1, this.#ten + 2],
     [1, this.#ten + 1, 2 * this.#ten + 1, 2 * this.#ten + 2],
-    [this.#ten, this.#ten + 1, this.#ten + 2, 2 * this.#ten],
-    [1, 2, this.#ten + 1, 2 * this.#ten + 1],
-    [this.#ten, this.#ten + 1, this.#ten + 2, 2],
+    [0, 1, 2, this.#ten],
   ];
 
-  #JTetrimino = [
-    [1, this.#ten + 1, 2 * this.#ten + 1, 2 * this.#ten],
-    [this.#ten, 2 * this.#ten, 2 * this.#ten + 1, 2 * this.#ten + 2],
-    [1, 2, this.#ten + 1, 2 * this.#ten + 1],
-    [this.#ten, this.#ten + 1, this.#ten + 2, 2 * this.#ten + 2],
+  zTetromino = [
+    [0, this.#ten, this.#ten + 1, this.#ten * 2 + 1],
+    [this.#ten + 1, this.#ten + 2, this.#ten * 2, this.#ten * 2 + 1],
+    [0, this.#ten, this.#ten + 1, this.#ten * 2 + 1],
+    [this.#ten + 1, this.#ten + 2, this.#ten * 2, this.#ten * 2 + 1],
   ];
 
-  #STetrimino = [
-    [this.#ten, 1, 2, this.#ten + 1],
-    [0, this.#ten, this.#ten + 1, 2 * this.#ten + 1],
-    [1, 2, this.#ten, this.#ten + 1],
-    [1, this.#ten + 1, this.#ten + 2, 2 * this.#ten + 2],
-  ];
-
-  #ZTetrimino = [
-    [0, 1, this.#ten + 1, this.#ten + 2],
-    [1, this.#ten + 1, this.#ten, 2 * this.#ten],
-    [0, 1, this.#ten + 1, this.#ten + 2],
+  sTetromino = [
+    [this.#ten, this.#ten + 1, 2 * this.#ten + 1, 2 * this.#ten + 2],
+    [2, this.#ten + 1, this.#ten + 2, 2 * this.#ten + 1],
+    [this.#ten, this.#ten + 1, 2 * this.#ten + 1, 2 * this.#ten + 2],
     [2, this.#ten + 1, this.#ten + 2, 2 * this.#ten + 1],
   ];
 
+  tTetromino = [
+    [1, this.#ten, this.#ten + 1, this.#ten + 2],
+    [1, this.#ten + 1, this.#ten + 2, this.#ten * 2 + 1],
+    [this.#ten, this.#ten + 1, this.#ten + 2, this.#ten * 2 + 1],
+    [1, this.#ten, this.#ten + 1, this.#ten * 2 + 1],
+  ];
+
+  oTetromino = [
+    [0, 1, this.#ten, this.#ten + 1],
+    [0, 1, this.#ten, this.#ten + 1],
+    [0, 1, this.#ten, this.#ten + 1],
+    [0, 1, this.#ten, this.#ten + 1],
+  ];
+
+  iTetromino = [
+    [1, this.#ten + 1, this.#ten * 2 + 1, this.#ten * 3 + 1],
+    [this.#ten, this.#ten + 1, this.#ten + 2, this.#ten + 3],
+    [1, this.#ten + 1, this.#ten * 2 + 1, this.#ten * 3 + 1],
+    [this.#ten, this.#ten + 1, this.#ten + 2, this.#ten + 3],
+  ];
+
   tetriminos = [
-    this.#ITetrimino,
-    this.#JTetrimino,
-    this.#LTetrimino,
-    this.#OTetrimino,
-    this.#STetrimino,
-    this.#TTetrimino,
-    this.#ZTetrimino,
+    this.jTetromino,
+    this.lTetromino,
+    this.zTetromino,
+    this.sTetromino,
+    this.tTetromino,
+    this.oTetromino,
+    this.iTetromino,
   ];
 
   getRandomTetrimino() {
     let randomShape = Math.floor(Math.random() * this.tetriminos.length);
-    // let randomShape = 0;
+    // let randomShape = 1;
     return this.tetriminos[randomShape];
   }
 }

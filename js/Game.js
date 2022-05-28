@@ -2,7 +2,7 @@ import { Board } from './Board';
 import { Tetrimino } from './Tetrimino';
 export class Game {
   startPosition = 4;
-  rotation = null;
+
   checkPosition = null;
   currentShape = null;
 
@@ -47,6 +47,7 @@ export class Game {
     const createTetrimino = tetrimino.getRandomTetrimino();
     this.draw(createTetrimino[this.rotation], this.startPosition);
     this.currentShape = createTetrimino;
+    this.rotate()
   }
 
   activeTetrimino() {
@@ -123,6 +124,7 @@ export class Game {
 
   moveDown() {
     this.control(10);
+    // console.log(this.activeTetriminosPosition());
   }
   moveLeft() {
     this.control(-1);
@@ -132,20 +134,21 @@ export class Game {
   }
 
   rotate() {
-    let currentValues = this.activeTetriminosPosition();
+    let currentPositions = this.activeTetriminosPosition();
     let substractPositions = this.currentShape[this.rotation];
-    let substracted = [];
 
-    for (let index = 0; index < currentValues.length; index++) {
-      let result = currentValues[index] - substractPositions[index];
-      substracted.push(result);
+    let asd = [];
+
+    for (let i = 0; i < currentPositions.length; i++) {
+      let result = currentPositions[i] - substractPositions[i];
+      // asd.push(result);
+      asd[i] = result;
     }
 
-    // console.log('c', currentValues);
-    console.log('s', substracted);
+    this.undraw(currentPositions);
 
-    this.undraw(currentValues);
-    this.draw(this.currentShape[this.rotation], substracted[0]);
     this.rotation === 3 ? (this.rotation = 0) : this.rotation++;
+
+    this.draw(substractPositions, asd[0]);
   }
 }
