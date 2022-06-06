@@ -11,7 +11,7 @@ export class Tetrimino {
 
   lTetromino = [
     [0, 1, this.#ten + 1, this.#ten * 2 + 1],
-    [2, this.#ten, this.#ten + 1, this.#ten + 2],
+    [2, this.#ten + 2, this.#ten + 3, this.#ten + 4],
     [1, this.#ten + 1, 2 * this.#ten + 1, 2 * this.#ten + 2],
     [0, 1, 2, this.#ten],
   ];
@@ -63,7 +63,6 @@ export class Tetrimino {
 
   getRandomTetrimino() {
     let randomShape = Math.floor(Math.random() * this.tetriminos.length);
-    // let randomShape = 1;
     return this.tetriminos[randomShape];
   }
 }
