@@ -21,8 +21,8 @@ export class Game {
       if (this.stopRight() && !this.isOccupied(1) && keyCode === 39) {
         this.moveRight();
       }
-      if (keyCode === 38) {
-        this.rotate();
+      if (this.shouldRotate() && keyCode === 38) {
+        this.rotate(this.prepareRotation());
       }
     });
   }
@@ -33,11 +33,10 @@ export class Game {
     this.eventListeners();
     this.checkPosition = setInterval(() => {
       this.stopMoving();
-      // this.shouldRotate();
+      this.stopRotate();
     }, 1);
   }
 
-  
   drawBoard(...params) {
     const board = new Board(...params);
     board.init();
@@ -46,11 +45,10 @@ export class Game {
   createTetrimino() {
     const tetrimino = new Tetrimino();
     this.rotation = Math.floor(Math.random() * 4);
-    // this.rotation = 3
     const createTetrimino = tetrimino.getRandomTetrimino();
     this.draw(createTetrimino[this.rotation], this.startPosition);
     this.currentShape = createTetrimino;
-    this.rotate();
+    this.rotate(this.prepareRotation());
   }
 
   activeTetrimino() {
@@ -116,54 +114,43 @@ export class Game {
     return !edge.some((x) => x >= 200);
   }
 
-  stopRotate() {}
+  stopRotate() {
+    if (!this.shouldRotate()) {
+      for (let el of this.rotatableTetrimino()) {
+        el.removeAttribute('data-rotatable');
+      }
+    }
+  }
+
   shouldRotate() {
     let currentPositions = this.rotatableTetriminosPosition();
-    // this.futureRotation = this.rotation;
-    // this.futureRotation === 0
-    //   ? (this.futureRotation = 3)
-    //   : this.futureRotation--;
-    // this.futureRotation = 0;
-    // let futureCondition = [];
-    let actualCondition = [];
+    let futureCondition = [];
 
-    // let futureValues = [];
-    let actualValues = [];
+    let futureValues = [];
 
-    let actualPositions = this.currentShape[this.rotation];
-    // let futurePositions = this.currentShape[this.futureRotation];
-
-    // for (let i = 0; i < currentPositions.length; i++) {
-    //   let result = currentPositions[i] - futurePositions[i];
-    //   futureValues[i] = result;
-    // }
-    // for (let i = 0; i < currentPositions.length; i++) {
-    //   futureCondition.push(futurePositions[i] + futureValues[0]);
-    // }
+    let futurePositions = this.currentShape[this.rotation];
 
     for (let i = 0; i < currentPositions.length; i++) {
-      let result = currentPositions[i] - actualPositions[i];
-      actualValues[i] = result;
+      let result = currentPositions[i] - futurePositions[i];
+      futureValues[i] = result;
     }
     for (let i = 0; i < currentPositions.length; i++) {
-      actualCondition.push(actualPositions[i] + actualValues[0]);
+      futureCondition.push(futurePositions[i] + futureValues[0]);
     }
 
-    // if (actualCondition.some((x) => x % 10 === 7)) {
-    //   if (futureCondition.some((x) => x % 10 === 0)) {
-    //     return false;
-    //   } else return true;
-    // } else if (actualCondition.some((x) => x % 10 === 8)) {
-    //   if (futureCondition.some((x) => x % 10 === 0)) {
-    //     return false;
-    //   } else return true;
-    // } else if (actualCondition.some((x) => x % 10 === 9)) {
-    //   if (futureCondition.some((x) => x % 10 === 0)) {
-    //     return false;
-    //   } else return true;
-    // } else return true;
-    console.log('a', currentPositions);
-    console.log('f', actualCondition);
+    if (currentPositions.some((x) => x % 10 === 7)) {
+      if (futureCondition.some((x) => x % 10 === 0)) {
+        return false;
+      } else return true;
+    } else if (currentPositions.some((x) => x % 10 === 8)) {
+      if (futureCondition.some((x) => x % 10 === 0)) {
+        return false;
+      } else return true;
+    } else if (currentPositions.some((x) => x % 10 === 9)) {
+      if (futureCondition.some((x) => x % 10 === 0)) {
+        return false;
+      } else return true;
+    } else return true;
   }
 
   isOccupied(value) {
@@ -196,7 +183,6 @@ export class Game {
 
   moveDown() {
     this.control(10);
-    this.shouldRotate();
   }
 
   moveLeft() {
@@ -206,8 +192,16 @@ export class Game {
     this.control(1);
   }
 
-  rotate() {
-    let currentPositions = this.activeTetriminosPosition();
+  rotate([substractPositions, rotationValues]) {
+    let rotatablePosition = this.activeTetriminosPosition();
+    if (rotationValues !== undefined) {
+      this.undraw(rotatablePosition);
+      this.draw(substractPositions, rotationValues);
+    }
+  }
+
+  prepareRotation() {
+    let currentPositions = this.rotatableTetriminosPosition();
     let substractPositions = this.currentShape[this.rotation];
 
     let rotationValues = [];
@@ -219,8 +213,7 @@ export class Game {
     }
 
     this.rotation === 3 ? (this.rotation = 0) : this.rotation++;
-
-    this.undraw(currentPositions);
-    this.draw(substractPositions, rotationValues[0]);
+    console.log(substractPositions, rotationValues[0]);
+    return [substractPositions, rotationValues[0]];
   }
 }
