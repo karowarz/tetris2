@@ -21,7 +21,12 @@ export class Game {
       if (this.stopRight() && !this.isOccupied(1) && keyCode === 39) {
         this.moveRight();
       }
-      if (this.shouldRotate() && keyCode === 38) {
+      if (
+        this.shouldRotate() &&
+        !this.isOccupied(1) &&
+        !this.isOccupied(-1) &&
+        keyCode === 38
+      ) {
         this.rotate(this.prepareRotation());
       }
     });
@@ -148,6 +153,10 @@ export class Game {
       } else return true;
     } else if (currentPositions.some((x) => x % 10 === 9)) {
       if (futureCondition.some((x) => x % 10 === 0)) {
+        return false;
+      } else return true;
+    } else if (currentPositions.some((x) => x % 10 === 0)) {
+      if (futureCondition.some((x) => x % 10 === 9)) {
         return false;
       } else return true;
     } else return true;
