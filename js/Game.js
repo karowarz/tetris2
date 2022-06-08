@@ -54,6 +54,10 @@ export class Game {
     this.draw(createTetrimino[this.rotation], this.startPosition);
     this.currentShape = createTetrimino;
     this.rotate(this.prepareRotation());
+
+    this.fallDown = setInterval(() => {
+      this.moveDown();
+    }, 1000);
   }
 
   activeTetrimino() {
@@ -110,6 +114,7 @@ export class Game {
         el.dataset.occupied = '';
         el.removeAttribute('data-rotatable');
       }
+      clearInterval(this.fallDown);
       this.createTetrimino();
     }
   }
@@ -220,9 +225,7 @@ export class Game {
       let result = currentPositions[i] - substractPositions[i];
       rotationValues[i] = result;
     }
-
     this.rotation === 3 ? (this.rotation = 0) : this.rotation++;
-    console.log(substractPositions, rotationValues[0]);
     return [substractPositions, rotationValues[0]];
   }
 }

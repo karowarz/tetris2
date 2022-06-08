@@ -18,15 +18,12 @@ export class Board {
         // element.dataset.x = row;
         // element.dataset.y = col;
         this.board[row].push(element);
-
       }
     }
   }
   drawBoard() {
     for (let [index, cell] of this.board.flat().entries()) {
       cell.dataset.x = index;
-      //text
-      cell.innerHTML = index;
       this.container.appendChild(cell);
     }
   }
