@@ -160,7 +160,7 @@ export class Game {
         el.dataset.occupied = '';
         el.removeAttribute('data-rotatable');
       }
-      clearInterval(this.fallDown);
+      this.createTetrimino();
     }
   }
 
