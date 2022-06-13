@@ -39,7 +39,6 @@ export class Game {
     this.checkPosition = setInterval(() => {
       this.stopMoving();
       this.stopRotate();
-      this.deleteRow(this.findRowToDelete());
     }, 1);
   }
 
@@ -59,6 +58,15 @@ export class Game {
     // this.fallDown = setInterval(() => {
     //   this.moveDown();
     // }, 1000);
+  }
+
+  async creation() {
+    let promise = new Promise((resolve) =>
+      setTimeout(() => {
+        resolve(this.createTetrimino());
+      }, 100)
+    );
+    let result = await promise;
   }
 
   activeTetrimino() {
@@ -110,23 +118,16 @@ export class Game {
   deleteRow(row) {
     if (row !== undefined) {
       let tab = [];
+      console.log(tab);
       for (let cell = 0; cell < 10; cell++) {
         tab.push(+(row + cell));
       }
       for (let el of tab) {
-        document.querySelector(`[data-x="${el}"]`).removeAttribute('style');
         document
           .querySelector(`[data-x="${el}"]`)
           .removeAttribute('data-occupied');
+        document.querySelector(`[data-x="${el}"]`).removeAttribute('style');
       }
-
-      let findToFall = document.querySelectorAll('[data-occupied]');
-      let toFall = [];
-      for (let el of findToFall) {
-        toFall.push(+el.dataset.x);
-      }
-      this.undraw(toFall);
-      this.draw(toFall.map((el) => el + 10));
     }
   }
 
@@ -160,7 +161,8 @@ export class Game {
         el.dataset.occupied = '';
         el.removeAttribute('data-rotatable');
       }
-      this.createTetrimino();
+      this.deleteRow(this.findRowToDelete());
+      this.creation();
     }
   }
 
