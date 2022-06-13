@@ -39,6 +39,7 @@ export class Game {
     this.checkPosition = setInterval(() => {
       this.stopMoving();
       this.stopRotate();
+      this.deleteRow(this.findRowToDelete());
     }, 1);
   }
 
@@ -55,9 +56,9 @@ export class Game {
     this.currentShape = createTetrimino;
     this.rotate(this.prepareRotation());
 
-    this.fallDown = setInterval(() => {
-      this.moveDown();
-    }, 1000);
+    // this.fallDown = setInterval(() => {
+    //   this.moveDown();
+    // }, 1000);
   }
 
   activeTetrimino() {
@@ -82,6 +83,51 @@ export class Game {
       x.push(+el.dataset.x);
     }
     return x;
+  }
+
+  findRowToDelete() {
+    let countOccupied = [];
+    let occupiedCells = document.querySelectorAll('[data-occupied]');
+
+    let row;
+
+    for (let el of occupiedCells) {
+      countOccupied.push(parseInt(el.dataset.x / 10));
+    }
+
+    let map = countOccupied.reduce(
+      (cnt, cur) => ((cnt[cur] = cnt[cur] + 1 || 1), cnt),
+      {}
+    );
+
+    for (let [key, value] of Object.entries(map)) {
+      if (value === 10) {
+        return (row = key);
+      }
+    }
+  }
+
+  deleteRow(row) {
+    if (row !== undefined) {
+      let tab = [];
+      for (let cell = 0; cell < 10; cell++) {
+        tab.push(+(row + cell));
+      }
+      for (let el of tab) {
+        document.querySelector(`[data-x="${el}"]`).removeAttribute('style');
+        document
+          .querySelector(`[data-x="${el}"]`)
+          .removeAttribute('data-occupied');
+      }
+
+      let findToFall = document.querySelectorAll('[data-occupied]');
+      let toFall = [];
+      for (let el of findToFall) {
+        toFall.push(+el.dataset.x);
+      }
+      this.undraw(toFall);
+      this.draw(toFall.map((el) => el + 10));
+    }
   }
 
   undraw(positions) {
@@ -115,7 +161,6 @@ export class Game {
         el.removeAttribute('data-rotatable');
       }
       clearInterval(this.fallDown);
-      this.createTetrimino();
     }
   }
 

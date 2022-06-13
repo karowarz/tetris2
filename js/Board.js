@@ -7,6 +7,7 @@ export class Board {
   init() {
     this.createElement();
     this.drawBoard();
+    this.rows();
   }
 
   createElement() {
@@ -15,16 +16,23 @@ export class Board {
       for (let col = 0; col < 10; col++) {
         const element = document.createElement('div');
         element.classList = 'boardCell';
-        // element.dataset.x = row;
-        // element.dataset.y = col;
         this.board[row].push(element);
       }
     }
   }
+
   drawBoard() {
     for (let [index, cell] of this.board.flat().entries()) {
       cell.dataset.x = index;
       this.container.appendChild(cell);
+    }
+  }
+
+  rows() {
+    for (let row = 0; row < 20; row++) {
+      for (let cell of this.board[row]) {
+        cell.dataset.row = row;
+      }
     }
   }
 }
