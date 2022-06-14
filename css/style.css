@@ -2,15 +2,31 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 200px;
+  max-height: 100vh;
+  border: 1px solid red;
 
 }
 
 .board {
-  width: 20rem;
+
+  display: grid;
+  grid-template-columns: repeat(10, 3rem);
+  /* width: 20rem;
   height: 40rem;
   display: grid;
   grid-template-columns: repeat(10, 3rem);
-  border: 1px solid #000;
+  border: 1px solid #000; */
+}
+
+.button{
+  background-color: transparent;
+  height: 3rem;
+  width: 5rem;
+}
+
+.clicked{
+  display: none;
 }
 
 .boardCell {

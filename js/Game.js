@@ -8,9 +8,12 @@ export class Game {
 
   UISelectors = {
     board: document.querySelector('[data-board]'),
+    start: document.querySelector('[data-start]'),
+    resume: document.querySelector('[data-resume]'),
+    stop: document.querySelector('[data-stop]'),
   };
 
-  eventListeners() {
+  eventListeners({ start, resume, stop } = this.UISelectors) {
     window.addEventListener('keydown', ({ keyCode }) => {
       if (this.shouldMove() && keyCode === 40) {
         this.moveDown();
@@ -30,17 +33,40 @@ export class Game {
         this.rotate(this.prepareRotation());
       }
     });
+
+    start.addEventListener('click', () => {
+      this.createTetrimino();
+      this.fallDown = setInterval(() => {
+        this.moveDown();
+      }, 1000);
+      this.checkPosition = setInterval(() => {
+        this.stopMoving();
+        this.stopRotate();
+        this.deleteRow(this.findRowToDelete());
+      }, 1);
+      this.UISelectors.start.classList.toggle('clicked');
+      this.UISelectors.stop.classList.toggle('clicked');
+    });
+
+    resume.addEventListener('click', () => {
+      this.fallDown = setInterval(() => {
+        this.moveDown();
+      }, 1000);
+
+      this.UISelectors.resume.classList.toggle('clicked');
+      this.UISelectors.stop.classList.toggle('clicked');
+    });
+
+    stop.addEventListener('click', () => {
+      clearInterval(this.fallDown);
+      this.UISelectors.stop.classList.toggle('clicked');
+      this.UISelectors.resume.classList.toggle('clicked');
+    });
   }
 
   start() {
     this.drawBoard(this.UISelectors.board);
-    this.createTetrimino();
     this.eventListeners();
-    this.checkPosition = setInterval(() => {
-      this.stopMoving();
-      this.stopRotate();
-      this.deleteRow(this.findRowToDelete());
-    }, 1);
   }
 
   drawBoard(...params) {
