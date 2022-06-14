@@ -118,7 +118,6 @@ export class Game {
   deleteRow(row) {
     if (row !== undefined) {
       let tab = [];
-      console.log(tab);
       for (let cell = 0; cell < 10; cell++) {
         tab.push(+(row + cell));
       }
@@ -126,7 +125,34 @@ export class Game {
         document
           .querySelector(`[data-x="${el}"]`)
           .removeAttribute('data-occupied');
+
         document.querySelector(`[data-x="${el}"]`).removeAttribute('style');
+      }
+
+      //takes the highest blocks and removes attribbutes and 'pull down' the rest of blocks with occupied data to delete row
+      let pastOccupiedVal = [];
+      let futureOccupiedVal = [];
+      for (let el of document.querySelectorAll('[data-occupied]')) {
+        pastOccupiedVal.push(+el.dataset.x);
+        futureOccupiedVal.push(+el.dataset.x + 10);
+      }
+
+      for (let el of pastOccupiedVal) {
+        document.querySelector(`[data-x="${el + 10}"]`).style.backgroundColor =
+          'blue';
+
+        document.querySelector(`[data-x="${el + 10}"]`).dataset.occupied = '';
+      }
+
+      let toDelete = pastOccupiedVal.filter(
+        (el) => futureOccupiedVal.indexOf(el) === -1
+      );
+
+      for (let el of toDelete) {
+        document.querySelector(`[data-x="${el}"]`).removeAttribute('style');
+        document
+          .querySelector(`[data-x="${el}"]`)
+          .removeAttribute('data-occupied');
       }
     }
   }
