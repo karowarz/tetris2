@@ -39,6 +39,7 @@ export class Game {
     this.checkPosition = setInterval(() => {
       this.stopMoving();
       this.stopRotate();
+      this.deleteRow(this.findRowToDelete());
     }, 1);
   }
 
@@ -60,6 +61,7 @@ export class Game {
     // }, 1000);
   }
 
+  //ascync makes a pause before create new tetromino
   async creation() {
     let promise = new Promise((resolve) =>
       setTimeout(() => {
@@ -102,6 +104,8 @@ export class Game {
     for (let el of occupiedCells) {
       countOccupied.push(parseInt(el.dataset.x / 10));
     }
+
+    //checks if any row has 10 'row values', that means its full occupied and ready to delete
 
     let map = countOccupied.reduce(
       (cnt, cur) => ((cnt[cur] = cnt[cur] + 1 || 1), cnt),
@@ -187,7 +191,6 @@ export class Game {
         el.dataset.occupied = '';
         el.removeAttribute('data-rotatable');
       }
-      this.deleteRow(this.findRowToDelete());
       this.creation();
     }
   }
