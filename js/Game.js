@@ -11,9 +11,10 @@ export class Game {
     start: document.querySelector('[data-start]'),
     resume: document.querySelector('[data-resume]'),
     stop: document.querySelector('[data-stop]'),
+    showNext: document.querySelector('[data-next]'),
   };
 
-  eventListeners({ start, resume, stop } = this.UISelectors) {
+  eventListeners({ start, resume, stop }) {
     window.addEventListener('keydown', ({ keyCode }) => {
       if (this.shouldMove() && keyCode === 40) {
         this.moveDown();
@@ -44,8 +45,8 @@ export class Game {
         this.stopRotate();
         this.deleteRow(this.findRowToDelete());
       }, 1);
-      this.UISelectors.start.classList.toggle('clicked');
-      this.UISelectors.stop.classList.toggle('clicked');
+      start.classList.toggle('clicked');
+      stop.classList.toggle('clicked');
     });
 
     resume.addEventListener('click', () => {
@@ -53,25 +54,30 @@ export class Game {
         this.moveDown();
       }, 1000);
 
-      this.UISelectors.resume.classList.toggle('clicked');
-      this.UISelectors.stop.classList.toggle('clicked');
+      resume.classList.toggle('clicked');
+      stop.classList.toggle('clicked');
     });
 
     stop.addEventListener('click', () => {
       clearInterval(this.fallDown);
-      this.UISelectors.stop.classList.toggle('clicked');
-      this.UISelectors.resume.classList.toggle('clicked');
+      stop.classList.toggle('clicked');
+      resume.classList.toggle('clicked');
     });
   }
 
   start() {
-    this.drawBoard(this.UISelectors.board);
-    this.eventListeners();
+    this.drawBoard(this.UISelectors);
+    this.eventListeners(this.UISelectors);
   }
 
-  drawBoard(...params) {
-    const board = new Board(...params);
-    board.init();
+  // drawBoard(...params) {
+  //   const board = new Board(...params);
+  //   board.init();
+  // }
+
+  drawBoard({ board }) {
+    const gameBoard = new Board(board);
+    gameBoard.init();
   }
 
   createTetrimino() {
@@ -81,10 +87,6 @@ export class Game {
     this.draw(createTetrimino[this.rotation], this.startPosition);
     this.currentShape = createTetrimino;
     this.rotate(this.prepareRotation());
-
-    // this.fallDown = setInterval(() => {
-    //   this.moveDown();
-    // }, 1000);
   }
 
   //ascync makes a pause before create new tetromino
@@ -94,7 +96,7 @@ export class Game {
         resolve(this.createTetrimino());
       }, 100)
     );
-    let result = await promise;
+    // let result = await promise;
   }
 
   activeTetrimino() {

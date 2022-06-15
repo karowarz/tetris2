@@ -2,9 +2,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 200px;
+  gap: 6rem;
   max-height: 100vh;
-  border: 1px solid red;
 
 }
 
@@ -19,13 +18,24 @@ body {
   border: 1px solid #000; */
 }
 
-.button{
+.button {
   background-color: transparent;
-  height: 3rem;
-  width: 5rem;
+  display: block;
+  height: 4rem;
+  width: 7rem;
+  border-radius: 1rem;
+  font-weight: bold;
+  font-size: 1.4rem;
+  transition: .3s;
 }
 
-.clicked{
+.button:hover {
+  background-color: blue;
+  color: white;
+  border-color: blue;
+}
+
+.clicked {
   display: none;
 }
 
@@ -37,4 +47,19 @@ body {
   position: relative;
 }
 
-/* .tetrimino { background-color: blue; } */
+
+.information {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  border: 1px solid #000;
+  height: 50vh;
+  width: 15rem;
+}
+
+.showNext{
+  height: 50%;
+  width: 100%; 
+  background-color: red;
+}
