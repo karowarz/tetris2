@@ -58,8 +58,17 @@ body {
   width: 15rem;
 }
 
-.showNext{
+.showNext {
   height: 50%;
-  width: 100%; 
+  width: 100%;
+  border: 1px solid #000;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.tiles{
+  aspect-ratio: 1;
+  width: 100%;
   background-color: red;
+  border: 1px solid #000;
 }
