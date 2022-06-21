@@ -3,7 +3,6 @@ import { Tetrimino } from './Tetrimino';
 export class Game {
   startPosition = 4;
 
-  // checkPosition = null;
   currentShape = null;
   rotation = null;
 
@@ -13,9 +12,10 @@ export class Game {
     resume: document.querySelector('[data-resume]'),
     stop: document.querySelector('[data-stop]'),
     showNext: document.querySelector('[data-next]'),
+    newGame: document.querySelector('[data-newGame]'),
   };
 
-  eventListeners({ start, resume, stop }) {
+  eventListeners({ start, resume, stop, newGame }) {
     window.addEventListener('keydown', ({ keyCode }) => {
       if (this.shouldMove() && keyCode === 40) {
         this.moveDown();
@@ -50,23 +50,43 @@ export class Game {
         this.stopRotate();
         this.deleteRow(this.findRowToDelete());
       }, 1);
-      start.classList.toggle('clicked');
-      stop.classList.toggle('clicked');
+      start.classList.add('clicked');
+      stop.classList.remove('clicked');
     });
 
+    newGame.addEventListener('click', () => {
+      this.tab.length = 0;
+      while (this.tab.length !== 2) {
+        this.currentAndNextTetrimino();
+      }
+      this.draw(this.currentShape[this.rotation], this.startPosition);
+      this.drawNext();
+      this.fallDown = setInterval(() => {
+        this.moveDown();
+      }, 1000);
+      // this.checkPosition = setInterval(() => {
+      //   this.stopMoving();
+      //   this.stopRotate();
+      //   this.deleteRow(this.findRowToDelete());
+      // }, 1);
+      stop.classList.remove('clicked');
+      newGame.classList.add('clicked');
+    });
     resume.addEventListener('click', () => {
       this.fallDown = setInterval(() => {
         this.moveDown();
       }, 1000);
 
       resume.classList.toggle('clicked');
-      stop.classList.toggle('clicked');
+      stop.classList.remove('clicked');
+      newGame.classList.add('clicked');
     });
 
     stop.addEventListener('click', () => {
       clearInterval(this.fallDown);
-      stop.classList.toggle('clicked');
-      resume.classList.toggle('clicked');
+      stop.classList.add('clicked');
+      resume.classList.remove('clicked');
+      newGame.classList.remove('clicked');
     });
   }
 
@@ -270,7 +290,6 @@ export class Game {
     let futureValues = [];
 
     let futurePositions = this.currentShape[this.rotation];
-    // let futurePositions = this.tab[0];
 
     for (let i = 0; i < currentPositions.length; i++) {
       let result = currentPositions[i] - futurePositions[i];
@@ -350,11 +369,10 @@ export class Game {
     let currentPositions = this.rotatableTetriminosPosition();
     let rotation = this.rotation;
     this.rotation === 3 ? (this.rotation = 0) : this.rotation++;
-    console.log(rotation);
-    console.log(rotation === 3 ? (rotation = 0) : rotation++);
-    console.log(this.rotation);
+    // console.log(rotation);
+    // console.log(rotation === 3 ? (rotation = 0) : rotation++);
+    // console.log(this.rotation);
     let substractPositions = this.currentShape[rotation];
-    // let substractPositions = this.tab[0];
 
     let rotationValues = [];
 
