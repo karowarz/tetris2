@@ -3,8 +3,8 @@ import { Tetrimino } from './Tetrimino';
 export class Game {
   startPosition = 4;
 
-  checkPosition = null;
-  currentShape = null;
+  // checkPosition = null;
+  // currentShape = null;
 
   UISelectors = {
     board: document.querySelector('[data-board]'),
@@ -36,7 +36,12 @@ export class Game {
     });
 
     start.addEventListener('click', () => {
-      this.createTetrimino();
+      while (this.tab.length !== 2) {
+        this.currentAndNextTetrimino();
+      }
+      console.log(this.tab.length);
+      this.draw(this.tab[0][0][this.tab[0][1]]);
+
       this.fallDown = setInterval(() => {
         this.moveDown();
       }, 1000);
@@ -82,11 +87,19 @@ export class Game {
 
   createTetrimino() {
     const tetrimino = new Tetrimino();
-    this.rotation = Math.floor(Math.random() * 4);
+    let rotation = Math.floor(Math.random() * 4);
     const createTetrimino = tetrimino.getRandomTetrimino();
-    this.draw(createTetrimino[this.rotation], this.startPosition);
-    this.currentShape = createTetrimino;
-    this.rotate(this.prepareRotation());
+    // this.draw(createTetrimino[this.rotation], this.startPosition);
+    // this.currentShape = createTetrimino;
+    // this.rotate(this.prepareRotation());
+
+    rotation === 3 ? (rotation = 0) : rotation++;
+    return [createTetrimino, rotation];
+  }
+
+  tab = [];
+  currentAndNextTetrimino() {
+    this.tab.push(this.createTetrimino());
   }
 
   //ascync makes a pause before create new tetromino
@@ -242,7 +255,8 @@ export class Game {
 
     let futureValues = [];
 
-    let futurePositions = this.currentShape[this.rotation];
+    // let futurePositions = this.currentShape[this.rotation];
+    let futurePositions = this.tab[0];
 
     for (let i = 0; i < currentPositions.length; i++) {
       let result = currentPositions[i] - futurePositions[i];
@@ -320,7 +334,8 @@ export class Game {
 
   prepareRotation() {
     let currentPositions = this.rotatableTetriminosPosition();
-    let substractPositions = this.currentShape[this.rotation];
+    // let substractPositions = this.currentShape[this.rotation];
+    let substractPositions = this.tab[0];
 
     let rotationValues = [];
 
@@ -329,7 +344,8 @@ export class Game {
       let result = currentPositions[i] - substractPositions[i];
       rotationValues[i] = result;
     }
-    this.rotation === 3 ? (this.rotation = 0) : this.rotation++;
+    // this.rotation === 3 ? (this.rotation = 0) : this.rotation++;
+
     return [substractPositions, rotationValues[0]];
   }
 }
