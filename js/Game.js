@@ -40,12 +40,8 @@ export class Game {
       while (this.tab.length !== 2) {
         this.currentAndNextTetrimino();
       }
-      // this.draw(this.tab[0][0][this.tab[0][1]], this.startPosition);
-      this.draw(this.currentShape[this.rotation]);
+      this.draw(this.currentShape[this.rotation], this.startPosition);
       this.drawNext();
-
-      console.log(this.tab);
-
       this.fallDown = setInterval(() => {
         this.moveDown();
       }, 1000);
@@ -352,7 +348,12 @@ export class Game {
 
   prepareRotation() {
     let currentPositions = this.rotatableTetriminosPosition();
-    let substractPositions = this.currentShape[this.rotation];
+    let rotation = this.rotation;
+    this.rotation === 3 ? (this.rotation = 0) : this.rotation++;
+    console.log(rotation);
+    console.log(rotation === 3 ? (rotation = 0) : rotation++);
+    console.log(this.rotation);
+    let substractPositions = this.currentShape[rotation];
     // let substractPositions = this.tab[0];
 
     let rotationValues = [];
@@ -362,7 +363,6 @@ export class Game {
       let result = currentPositions[i] - substractPositions[i];
       rotationValues[i] = result;
     }
-    // this.rotation === 3 ? (this.rotation = 0) : this.rotation++;
 
     return [substractPositions, rotationValues[0]];
   }

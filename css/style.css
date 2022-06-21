@@ -53,15 +53,15 @@ body {
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
-  outline: 1px solid #000;
-  height: 50vh;
+  /* outline: 1px solid #000; */
+  height: 30rem;
   width: 15rem;
 }
 
 .showNext {
   height: 30%;
   width: 60%;
-  outline: 1px solid #000;
+  /* outline: 1px solid #000; */
 
   display: grid;
   grid-template-columns: repeat(4, 1fr);
