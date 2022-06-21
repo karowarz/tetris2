@@ -41,6 +41,7 @@ export class Game {
       }
       console.log(this.tab.length);
       this.draw(this.tab[0][0][this.tab[0][1]]);
+      this.drawNext();
 
       this.fallDown = setInterval(() => {
         this.moveDown();
@@ -74,11 +75,6 @@ export class Game {
     this.drawBoard(this.UISelectors);
     this.eventListeners(this.UISelectors);
   }
-
-  // drawBoard(...params) {
-  //   const board = new Board(...params);
-  //   board.init();
-  // }
 
   drawBoard({ board }) {
     const gameBoard = new Board(board);
@@ -222,6 +218,13 @@ export class Game {
       document.querySelector(`[data-x="${+el + shift}"]`).dataset.active = '';
       document.querySelector(`[data-x="${+el + shift}"]`).dataset.rotatable =
         '';
+    }
+  }
+
+  drawNext() {
+    for (let el of this.tab[1][0][this.tab[0][1]]) {
+      document.querySelector(`[data-tiles="${+el}"]`).style.backgroundColor =
+        'green';
     }
   }
 
