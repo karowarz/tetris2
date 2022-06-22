@@ -291,6 +291,8 @@ export class Game {
 
     let futurePositions = this.currentShape[this.rotation];
 
+    // console.log(currentPositions);
+    // console.log(futurePositions);
     for (let i = 0; i < currentPositions.length; i++) {
       let result = currentPositions[i] - futurePositions[i];
       futureValues[i] = result;
