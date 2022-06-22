@@ -19,7 +19,7 @@ export class Game {
     window.addEventListener('keydown', ({ keyCode }) => {
       if (this.shouldMove() && keyCode === 40) {
         this.moveDown();
-        console.log(this.tab[1][0][this.tab[0][1]]);
+        // console.log(this.tab[1][0][this.tab[0][1]]);
       }
       if (this.stopLeft(-1) && !this.isOccupied(-1) && keyCode === 37) {
         this.moveLeft();
@@ -57,10 +57,16 @@ export class Game {
     });
 
     finish.addEventListener('click', () => {
-      let asd = this.activeTetriminosPosition();
-      this.undraw(asd);
+      let active = this.activeTetriminosPosition();
+      let occupied = [];
+      for (let el of document.querySelectorAll('[data-occupied]')) {
+        occupied.push(+el.dataset.x);
+      }
+      this.undraw(occupied);
+      this.undraw(active);
       this.undrawNext();
       this.tab.length = 0;
+      clearInterval(this.fallDown);
 
       finish.classList.toggle('clicked');
       start.classList.toggle('clicked');
@@ -123,7 +129,6 @@ export class Game {
           this.drawNext(),
           this.prepareRotation()
         );
-        // resolve(this.createTetrimino());
       }, 100)
     );
     // let result = await promise;
@@ -179,45 +184,75 @@ export class Game {
 
   deleteRow(row) {
     if (row !== undefined) {
-      let tab = [];
-      for (let cell = 0; cell < 10; cell++) {
-        tab.push(+(row + cell));
-      }
-      for (let el of tab) {
-        document
-          .querySelector(`[data-x="${el}"]`)
-          .removeAttribute('data-occupied');
+      let deletedRowValues = [];
+      let valuesLessThanDeleted = [];
 
-        // document.querySelector(`[data-x="${el}"]`).removeAttribute('style');
+      for (let el = 0; el < 10; el++) {
+        deletedRowValues.push(+(row + el));
       }
 
-      //takes the highest blocks and removes attribbutes and 'pull down' the rest of blocks with occupied data to delete row
-      let pastOccupiedVal = [];
-      let futureOccupiedVal = [];
-      for (let el of document.querySelectorAll('[data-occupied]')) {
-        pastOccupiedVal.push(+el.dataset.x);
-        futureOccupiedVal.push(+el.dataset.x + 10);
-      }
-
-      for (let el of pastOccupiedVal) {
-        document.querySelector(`[data-x="${el + 10}"]`).style.backgroundColor =
-          'blue';
-
-        document.querySelector(`[data-x="${el + 10}"]`).dataset.occupied = '';
-      }
-
-      let toDelete = pastOccupiedVal.filter(
-        (el) => futureOccupiedVal.indexOf(el) === -1
-      );
-
-      for (let el of toDelete) {
+      for (let el of deletedRowValues) {
         document.querySelector(`[data-x="${el}"]`).removeAttribute('style');
         document
           .querySelector(`[data-x="${el}"]`)
           .removeAttribute('data-occupied');
       }
+      for (let el of document.querySelectorAll('[data-occupied]')) {
+        if (el.dataset.x < deletedRowValues[0]) {
+          valuesLessThanDeleted.push(+el.dataset.x);
+        }
+      }
+
+      for (let el of valuesLessThanDeleted) {
+        document.querySelector(`[data-x="${el}"]`).removeAttribute('style');
+        document
+          .querySelector(`[data-x="${el}"]`)
+          .removeAttribute('data-occupied');
+      }
+      this.draw(valuesLessThanDeleted.map((el) => el + 10));
     }
   }
+  // deleteRow(row) {
+  //   if (row !== undefined) {
+  //     let tab = [];
+  //     for (let cell = 0; cell < 10; cell++) {
+  //       tab.push(+(row + cell));
+  //     }
+  //     for (let el of tab) {
+  //       document
+  //         .querySelector(`[data-x="${el}"]`)
+  //         .removeAttribute('data-occupied');
+
+  //       document.querySelector(`[data-x="${el}"]`).removeAttribute('style');
+  //     }
+
+  //     //takes the highest blocks and removes attribbutes and 'pull down' the rest of blocks with occupied data to delete row
+  //     let pastOccupiedVal = [];
+  //     let futureOccupiedVal = [];
+  //     for (let el of document.querySelectorAll('[data-occupied]')) {
+  //       pastOccupiedVal.push(+el.dataset.x);
+  //       futureOccupiedVal.push(+el.dataset.x + 10);
+  //     }
+
+  //     for (let el of pastOccupiedVal) {
+  //       document.querySelector(`[data-x="${el + 10}"]`).style.backgroundColor =
+  //         'blue';
+
+  //       document.querySelector(`[data-x="${el + 10}"]`).dataset.occupied = '';
+  //     }
+
+  //     let toDelete = pastOccupiedVal.filter(
+  //       (el) => futureOccupiedVal.indexOf(el) === -1
+  //     );
+
+  //     for (let el of toDelete) {
+  //       document.querySelector(`[data-x="${el}"]`).removeAttribute('style');
+  //       document
+  //         .querySelector(`[data-x="${el}"]`)
+  //         .removeAttribute('data-occupied');
+  //     }
+  //   }
+  // }
 
   undraw(positions) {
     for (let el of positions) {
@@ -287,8 +322,6 @@ export class Game {
 
     let futurePositions = this.currentShape[this.rotation];
 
-    // console.log(currentPositions);
-    // console.log(futurePositions);
     for (let i = 0; i < currentPositions.length; i++) {
       let result = currentPositions[i] - futurePositions[i];
       futureValues[i] = result;
@@ -367,9 +400,6 @@ export class Game {
     let currentPositions = this.rotatableTetriminosPosition();
     let rotation = this.rotation;
     this.rotation === 3 ? (this.rotation = 0) : this.rotation++;
-    // console.log(rotation);
-    // console.log(rotation === 3 ? (rotation = 0) : rotation++);
-    // console.log(this.rotation);
     let substractPositions = this.currentShape[rotation];
 
     let rotationValues = [];
