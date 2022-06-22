@@ -47,11 +47,6 @@ export class Game {
       this.fallDown = setInterval(() => {
         this.moveDown();
       }, 1000);
-      this.checkPosition = setInterval(() => {
-        this.stopMoving();
-        this.stopRotate();
-        this.deleteRow(this.findRowToDelete());
-      }, 1);
       start.classList.toggle('clicked');
       stop.classList.toggle('clicked');
     });
@@ -118,19 +113,35 @@ export class Game {
   }
 
   //ascync makes a pause before create new tetromino
-  async creation() {
-    let promise = new Promise((resolve) =>
-      setTimeout(() => {
-        resolve(
-          this.undrawNext(),
-          this.tab.shift(),
-          this.currentAndNextTetrimino(),
-          this.draw(this.currentShape[this.rotation], this.startPosition),
-          this.drawNext(),
-          this.prepareRotation()
-        );
-      }, 100)
-    );
+  // async creation() {
+  //   let promise = new Promise((resolve) =>
+  //     setTimeout(() => {
+  //       resolve(
+  //         this.undrawNext(),
+  //         this.tab.shift(),
+  //         this.currentAndNextTetrimino(),
+  //         this.draw(this.currentShape[this.rotation], this.startPosition),
+  //         this.drawNext(),
+  //         this.prepareRotation()
+  //       );
+  //     }, 100)
+  //   );
+  //   // let result = await promise;
+  // }
+
+  creation() {
+    // let promise = new Promise((resolve) =>
+    // setTimeout(() => {
+    // resolve(
+    this.undrawNext(),
+      this.tab.shift(),
+      this.currentAndNextTetrimino(),
+      this.draw(this.currentShape[this.rotation], this.startPosition),
+      this.drawNext(),
+      this.prepareRotation();
+    // );
+    // }, 100)
+    // );
     // let result = await promise;
   }
 
@@ -290,16 +301,18 @@ export class Game {
     }
   }
 
-  stopMoving() {
-    if (!this.shouldMove() || this.isOccupied(10)) {
-      for (let el of this.activeTetrimino()) {
-        el.removeAttribute('data-active');
-        el.dataset.occupied = '';
-        el.removeAttribute('data-rotatable');
-      }
-      this.creation();
-    }
-  }
+  // stopMoving() {
+  //   if (!this.shouldMove() || this.isOccupied(10)) {
+  //     for (let el of this.activeTetrimino()) {
+  //       el.removeAttribute('data-active');
+  //       el.dataset.occupied = '';
+  //       el.removeAttribute('data-rotatable');
+  //     }
+
+  //     this.deleteRow(this.findRowToDelete());
+  //     this.creation();
+  //   }
+  // }
 
   shouldMove() {
     let edge = this.activeTetriminosPosition().map((x) => x + 10);
@@ -378,7 +391,18 @@ export class Game {
   }
 
   moveDown() {
-    this.control(10);
+    if (!this.shouldMove() || this.isOccupied(10)) {
+      for (let el of this.activeTetrimino()) {
+        el.removeAttribute('data-active');
+        el.dataset.occupied = '';
+        el.removeAttribute('data-rotatable');
+      }
+
+      this.deleteRow(this.findRowToDelete());
+      this.creation();
+    } else {
+      this.control(10);
+    }
   }
 
   moveLeft() {
@@ -389,10 +413,16 @@ export class Game {
   }
 
   rotate([substractPositions, rotationValues]) {
-    let rotatablePosition = this.activeTetriminosPosition();
-    if (rotationValues !== undefined) {
-      this.undraw(rotatablePosition);
-      this.draw(substractPositions, rotationValues);
+    if (!this.shouldRotate()) {
+      for (let el of this.rotatableTetrimino()) {
+        el.removeAttribute('data-rotatable');
+      }
+    } else {
+      let rotatablePosition = this.activeTetriminosPosition();
+      if (rotationValues !== undefined) {
+        this.undraw(rotatablePosition);
+        this.draw(substractPositions, rotationValues);
+      }
     }
   }
 
