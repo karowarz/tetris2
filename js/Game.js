@@ -12,13 +12,14 @@ export class Game {
     resume: document.querySelector('[data-resume]'),
     stop: document.querySelector('[data-stop]'),
     showNext: document.querySelector('[data-next]'),
-    newGame: document.querySelector('[data-newGame]'),
+    finish: document.querySelector('[data-finish]'),
   };
 
-  eventListeners({ start, resume, stop, newGame }) {
+  eventListeners({ start, resume, stop, finish }) {
     window.addEventListener('keydown', ({ keyCode }) => {
       if (this.shouldMove() && keyCode === 40) {
         this.moveDown();
+        console.log(this.tab[1][0][this.tab[0][1]]);
       }
       if (this.stopLeft(-1) && !this.isOccupied(-1) && keyCode === 37) {
         this.moveLeft();
@@ -42,6 +43,7 @@ export class Game {
       }
       this.draw(this.currentShape[this.rotation], this.startPosition);
       this.drawNext();
+      this.prepareRotation();
       this.fallDown = setInterval(() => {
         this.moveDown();
       }, 1000);
@@ -50,43 +52,36 @@ export class Game {
         this.stopRotate();
         this.deleteRow(this.findRowToDelete());
       }, 1);
-      start.classList.add('clicked');
-      stop.classList.remove('clicked');
+      start.classList.toggle('clicked');
+      stop.classList.toggle('clicked');
     });
 
-    newGame.addEventListener('click', () => {
+    finish.addEventListener('click', () => {
+      let asd = this.activeTetriminosPosition();
+      this.undraw(asd);
+      this.undrawNext();
       this.tab.length = 0;
-      while (this.tab.length !== 2) {
-        this.currentAndNextTetrimino();
-      }
-      this.draw(this.currentShape[this.rotation], this.startPosition);
-      this.drawNext();
-      this.fallDown = setInterval(() => {
-        this.moveDown();
-      }, 1000);
-      // this.checkPosition = setInterval(() => {
-      //   this.stopMoving();
-      //   this.stopRotate();
-      //   this.deleteRow(this.findRowToDelete());
-      // }, 1);
-      stop.classList.remove('clicked');
-      newGame.classList.add('clicked');
+
+      finish.classList.toggle('clicked');
+      start.classList.toggle('clicked');
+      resume.classList.toggle('clicked');
     });
+
     resume.addEventListener('click', () => {
       this.fallDown = setInterval(() => {
         this.moveDown();
       }, 1000);
 
       resume.classList.toggle('clicked');
-      stop.classList.remove('clicked');
-      newGame.classList.add('clicked');
+      stop.classList.toggle('clicked');
+      finish.classList.toggle('clicked');
     });
 
     stop.addEventListener('click', () => {
       clearInterval(this.fallDown);
-      stop.classList.add('clicked');
-      resume.classList.remove('clicked');
-      newGame.classList.remove('clicked');
+      stop.classList.toggle('clicked');
+      resume.classList.toggle('clicked');
+      finish.classList.toggle('clicked');
     });
   }
 
@@ -124,8 +119,9 @@ export class Game {
           this.undrawNext(),
           this.tab.shift(),
           this.currentAndNextTetrimino(),
-          this.draw(this.currentShape[this.rotation]),
-          this.drawNext()
+          this.draw(this.currentShape[this.rotation], this.startPosition),
+          this.drawNext(),
+          this.prepareRotation()
         );
         // resolve(this.createTetrimino());
       }, 100)
@@ -192,7 +188,7 @@ export class Game {
           .querySelector(`[data-x="${el}"]`)
           .removeAttribute('data-occupied');
 
-        document.querySelector(`[data-x="${el}"]`).removeAttribute('style');
+        // document.querySelector(`[data-x="${el}"]`).removeAttribute('style');
       }
 
       //takes the highest blocks and removes attribbutes and 'pull down' the rest of blocks with occupied data to delete row

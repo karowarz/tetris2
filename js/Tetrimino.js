@@ -11,7 +11,7 @@ export class Tetrimino {
 
   lTetromino = [
     [0, 1, this.#ten + 1, this.#ten * 2 + 1],
-    [2, this.#ten + 2, this.#ten + 3, this.#ten + 4],
+    [1, this.#ten + 1, this.#ten + 2, this.#ten + 3],
     [1, this.#ten + 1, 2 * this.#ten + 1, 2 * this.#ten + 2],
     [0, 1, 2, this.#ten],
   ];
