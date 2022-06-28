@@ -19,7 +19,6 @@ export class Game {
     window.addEventListener('keydown', ({ keyCode }) => {
       if (this.shouldMove() && keyCode === 40) {
         this.moveDown();
-        // console.log(this.tab[1][0][this.tab[0][1]]);
       }
       if (this.stopLeft(-1) && !this.isOccupied(-1) && keyCode === 37) {
         this.moveLeft();
@@ -38,12 +37,7 @@ export class Game {
     });
 
     start.addEventListener('click', () => {
-      while (this.tab.length !== 2) {
-        this.currentAndNextTetrimino();
-      }
-      this.draw(this.currentShape[this.rotation], this.startPosition);
-      this.drawNext();
-      this.prepareRotation();
+      this.creation();
       this.fallDown = setInterval(() => {
         this.moveDown();
       }, 1000);
@@ -54,6 +48,8 @@ export class Game {
     finish.addEventListener('click', () => {
       let active = this.activeTetriminosPosition();
       let occupied = [];
+      this.currentShape = null;
+      this.rotation = null;
       for (let el of document.querySelectorAll('[data-occupied]')) {
         occupied.push(+el.dataset.x);
       }
@@ -112,37 +108,18 @@ export class Game {
     this.rotation = this.tab[0][1];
   }
 
-  //ascync makes a pause before create new tetromino
-  // async creation() {
-  //   let promise = new Promise((resolve) =>
-  //     setTimeout(() => {
-  //       resolve(
-  //         this.undrawNext(),
-  //         this.tab.shift(),
-  //         this.currentAndNextTetrimino(),
-  //         this.draw(this.currentShape[this.rotation], this.startPosition),
-  //         this.drawNext(),
-  //         this.prepareRotation()
-  //       );
-  //     }, 100)
-  //   );
-  //   // let result = await promise;
-  // }
-
+  deletion() {
+    this.undrawNext();
+    this.tab.shift();
+    this.currentAndNextTetrimino();
+  }
   creation() {
-    // let promise = new Promise((resolve) =>
-    // setTimeout(() => {
-    // resolve(
-    this.undrawNext(),
-      this.tab.shift(),
-      this.currentAndNextTetrimino(),
-      this.draw(this.currentShape[this.rotation], this.startPosition),
-      this.drawNext(),
-      this.prepareRotation();
-    // );
-    // }, 100)
-    // );
-    // let result = await promise;
+    while (this.tab.length !== 2) {
+      this.currentAndNextTetrimino();
+    }
+    this.draw(this.currentShape[this.rotation], this.startPosition);
+    this.drawNext();
+    this.prepareRotation();
   }
 
   activeTetrimino() {
@@ -209,7 +186,8 @@ export class Game {
           .removeAttribute('data-occupied');
       }
       for (let el of document.querySelectorAll('[data-occupied]')) {
-        if (el.dataset.x < deletedRowValues[0]) {
+        // if (el.dataset.x < deletedRowValues[0] && el.dataset.x > 40) {
+        if (el.dataset.x < deletedRowValues[0] && el.dataset.x > 40) {
           valuesLessThanDeleted.push(+el.dataset.x);
         }
       }
@@ -223,47 +201,6 @@ export class Game {
       this.draw(valuesLessThanDeleted.map((el) => el + 10));
     }
   }
-  // deleteRow(row) {
-  //   if (row !== undefined) {
-  //     let tab = [];
-  //     for (let cell = 0; cell < 10; cell++) {
-  //       tab.push(+(row + cell));
-  //     }
-  //     for (let el of tab) {
-  //       document
-  //         .querySelector(`[data-x="${el}"]`)
-  //         .removeAttribute('data-occupied');
-
-  //       document.querySelector(`[data-x="${el}"]`).removeAttribute('style');
-  //     }
-
-  //     //takes the highest blocks and removes attribbutes and 'pull down' the rest of blocks with occupied data to delete row
-  //     let pastOccupiedVal = [];
-  //     let futureOccupiedVal = [];
-  //     for (let el of document.querySelectorAll('[data-occupied]')) {
-  //       pastOccupiedVal.push(+el.dataset.x);
-  //       futureOccupiedVal.push(+el.dataset.x + 10);
-  //     }
-
-  //     for (let el of pastOccupiedVal) {
-  //       document.querySelector(`[data-x="${el + 10}"]`).style.backgroundColor =
-  //         'blue';
-
-  //       document.querySelector(`[data-x="${el + 10}"]`).dataset.occupied = '';
-  //     }
-
-  //     let toDelete = pastOccupiedVal.filter(
-  //       (el) => futureOccupiedVal.indexOf(el) === -1
-  //     );
-
-  //     for (let el of toDelete) {
-  //       document.querySelector(`[data-x="${el}"]`).removeAttribute('style');
-  //       document
-  //         .querySelector(`[data-x="${el}"]`)
-  //         .removeAttribute('data-occupied');
-  //     }
-  //   }
-  // }
 
   undraw(positions) {
     for (let el of positions) {
@@ -279,12 +216,12 @@ export class Game {
   }
   draw(positions, shift = 0) {
     for (let el of positions) {
-      document.querySelector(
-        `[data-x="${+el + shift}"]`
-      ).style.backgroundColor = 'blue';
       document.querySelector(`[data-x="${+el + shift}"]`).dataset.active = '';
       document.querySelector(`[data-x="${+el + shift}"]`).dataset.rotatable =
         '';
+      document.querySelector(
+        `[data-x="${+el + shift}"]`
+      ).style.backgroundColor = 'blue';
     }
   }
 
@@ -300,19 +237,6 @@ export class Game {
       document.querySelector(`[data-tiles="${+el}"]`).removeAttribute('style');
     }
   }
-
-  // stopMoving() {
-  //   if (!this.shouldMove() || this.isOccupied(10)) {
-  //     for (let el of this.activeTetrimino()) {
-  //       el.removeAttribute('data-active');
-  //       el.dataset.occupied = '';
-  //       el.removeAttribute('data-rotatable');
-  //     }
-
-  //     this.deleteRow(this.findRowToDelete());
-  //     this.creation();
-  //   }
-  // }
 
   shouldMove() {
     let edge = this.activeTetriminosPosition().map((x) => x + 10);
@@ -399,7 +323,16 @@ export class Game {
       }
 
       this.deleteRow(this.findRowToDelete());
-      this.creation();
+      this.deletion();
+      setTimeout(() => {
+        this.creation();
+      }, 100);
+
+      for (let el of this.activeTetrimino()) {
+        el.removeAttribute('data-active');
+        el.dataset.occupied = '';
+        el.removeAttribute('data-rotatable');
+      }
     } else {
       this.control(10);
     }
