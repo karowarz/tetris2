@@ -52,6 +52,7 @@ export class Game {
       this.rotation = null;
       for (let el of document.querySelectorAll('[data-occupied]')) {
         occupied.push(+el.dataset.x);
+        el.removeAttribute('data-occupied');
       }
       this.undraw(occupied);
       this.undraw(active);
