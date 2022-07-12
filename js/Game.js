@@ -2,7 +2,6 @@ import { Board } from './Board';
 import { Tetrimino } from './Tetrimino';
 export class Game {
   startPosition = 4;
-
   currentShape = null;
   rotation = null;
 
@@ -84,27 +83,27 @@ export class Game {
   }
 
   start() {
-    this.drawBoard(this.UISelectors);
+    this.renderBoard(this.UISelectors);
     this.eventListeners(this.UISelectors);
   }
 
-  drawBoard({ board }) {
+  renderBoard({ board }) {
     const gameBoard = new Board(board);
     gameBoard.init();
   }
 
-  createTetrimino() {
+  drawTetrimino() {
     const tetrimino = new Tetrimino();
     let rotation = Math.floor(Math.random() * 4);
-    const createTetrimino = tetrimino.getRandomTetrimino();
+    const drawTetrimino = tetrimino.getRandomTetrimino();
     rotation === 3 ? (rotation = 0) : rotation++;
-    return [createTetrimino, rotation];
+    return [drawTetrimino, rotation];
   }
 
   //creates 2 tetriminos, current and next and push em to array
   tetriminosContainer = [];
   currentAndNextTetrimino() {
-    this.tetriminosContainer.push(this.createTetrimino());
+    this.tetriminosContainer.push(this.drawTetrimino());
     this.currentShape = this.tetriminosContainer[0][0];
     this.rotation = this.tetriminosContainer[0][1];
   }
@@ -114,6 +113,7 @@ export class Game {
     this.tetriminosContainer.shift();
     this.currentAndNextTetrimino();
   }
+
   creation() {
     while (this.tetriminosContainer.length !== 2) {
       this.currentAndNextTetrimino();
