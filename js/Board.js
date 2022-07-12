@@ -24,7 +24,6 @@ export class Board {
   drawBoard() {
     for (let [index, cell] of this.board.flat().entries()) {
       cell.dataset.x = index;
-      // cell.textContent = index
       this.container.appendChild(cell);
     }
   }

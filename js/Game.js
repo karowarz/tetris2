@@ -57,7 +57,7 @@ export class Game {
       this.undraw(occupied);
       this.undraw(active);
       this.undrawNext();
-      this.tab.length = 0;
+      this.tetriminosContainer.length = 0;
       clearInterval(this.fallDown);
 
       finish.classList.toggle('clicked');
@@ -102,20 +102,20 @@ export class Game {
   }
 
   //creates 2 tetriminos, current and next and push em to array
-  tab = [];
+  tetriminosContainer = [];
   currentAndNextTetrimino() {
-    this.tab.push(this.createTetrimino());
-    this.currentShape = this.tab[0][0];
-    this.rotation = this.tab[0][1];
+    this.tetriminosContainer.push(this.createTetrimino());
+    this.currentShape = this.tetriminosContainer[0][0];
+    this.rotation = this.tetriminosContainer[0][1];
   }
 
   deletion() {
     this.undrawNext();
-    this.tab.shift();
+    this.tetriminosContainer.shift();
     this.currentAndNextTetrimino();
   }
   creation() {
-    while (this.tab.length !== 2) {
+    while (this.tetriminosContainer.length !== 2) {
       this.currentAndNextTetrimino();
     }
     this.draw(this.currentShape[this.rotation], this.startPosition);
@@ -187,7 +187,6 @@ export class Game {
           .removeAttribute('data-occupied');
       }
       for (let el of document.querySelectorAll('[data-occupied]')) {
-        // if (el.dataset.x < deletedRowValues[0] && el.dataset.x > 40) {
         if (el.dataset.x < deletedRowValues[0] && el.dataset.x > 40) {
           valuesLessThanDeleted.push(+el.dataset.x);
         }
@@ -227,14 +226,18 @@ export class Game {
   }
 
   drawNext() {
-    for (let el of this.tab[1][0][this.tab[0][1]]) {
+    for (let el of this.tetriminosContainer[1][0][
+      this.tetriminosContainer[0][1]
+    ]) {
       document.querySelector(`[data-tiles="${+el}"]`).style.backgroundColor =
         'green';
     }
   }
 
   undrawNext() {
-    for (let el of this.tab[1][0][this.tab[0][1]]) {
+    for (let el of this.tetriminosContainer[1][0][
+      this.tetriminosContainer[0][1]
+    ]) {
       document.querySelector(`[data-tiles="${+el}"]`).removeAttribute('style');
     }
   }
